@@ -1155,16 +1155,14 @@ generate_hash_secret_salt(void) {
 #endif
 }
 
-static void
-beforeHandler(XML_Parser parser) {
-  assert(! parser->m_insideHandler);
-  parser->m_insideHandler = true;
+#define beforeHandler(parser) { \
+  assert(! parser->m_insideHandler); \
+  parser->m_insideHandler = true; \
 }
 
-static void
-afterHandler(XML_Parser parser) {
-  assert(parser->m_insideHandler);
-  parser->m_insideHandler = false;
+#define afterHandler(parser) { \
+  assert(parser->m_insideHandler); \
+  parser->m_insideHandler = false; \
 }
 
 static enum XML_Error
