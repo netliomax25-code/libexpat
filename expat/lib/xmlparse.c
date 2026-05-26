@@ -811,6 +811,7 @@ struct XML_ParserStruct {
   ENTITY_STATS m_entity_stats;
 #endif
   XML_Bool m_reenter;
+  bool m_insideHandler;
 };
 
 #if XML_GE == 1
@@ -1152,6 +1153,18 @@ generate_hash_secret_salt(void) {
     return ENTROPY_DEBUG("fallback(8)", entropy);
   }
 #endif
+}
+
+static void
+beforeHandler(XML_Parser parser) {
+  assert(! parser->m_insideHandler);
+  parser->m_insideHandler = true;
+}
+
+static void
+afterHandler(XML_Parser parser) {
+  assert(parser->m_insideHandler);
+  parser->m_insideHandler = false;
 }
 
 static enum XML_Error
@@ -1508,6 +1521,7 @@ parserInit(XML_Parser parser, const XML_Char *encodingName) {
   parser->m_parsingStatus.parsing = XML_INITIALIZED;
   // Reentry can only be triggered inside m_processor calls
   parser->m_reenter = XML_FALSE;
+  parser->m_insideHandler = false;
 #ifdef XML_DTD
   parser->m_isParamEntity = XML_FALSE;
   parser->m_useForeignDTD = XML_FALSE;
