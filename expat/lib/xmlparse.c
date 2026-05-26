@@ -5423,9 +5423,12 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
           if (status == XML_STATUS_ERROR)
             return XML_ERROR_EXTERNAL_ENTITY_HANDLING;
           if (dtd->paramEntityRead) {
-            if (! dtd->standalone && parser->m_notStandaloneHandler
-                && ! parser->m_notStandaloneHandler(parser->m_handlerArg))
-              return XML_ERROR_NOT_STANDALONE;
+            if (! dtd->standalone && parser->m_notStandaloneHandler) {
+              const int status
+                  = parser->m_notStandaloneHandler(parser->m_handlerArg);
+              if (status == XML_STATUS_ERROR)
+                return XML_ERROR_NOT_STANDALONE;
+            }
           }
           /* if we didn't read the foreign DTD then this means that there
              is no external subset and we must reset dtd->hasParamEntityRefs
@@ -5470,9 +5473,12 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
           if (status == XML_STATUS_ERROR)
             return XML_ERROR_EXTERNAL_ENTITY_HANDLING;
           if (dtd->paramEntityRead) {
-            if (! dtd->standalone && parser->m_notStandaloneHandler
-                && ! parser->m_notStandaloneHandler(parser->m_handlerArg))
-              return XML_ERROR_NOT_STANDALONE;
+            if (! dtd->standalone && parser->m_notStandaloneHandler) {
+              const int status
+                  = parser->m_notStandaloneHandler(parser->m_handlerArg);
+              if (status == XML_STATUS_ERROR)
+                return XML_ERROR_NOT_STANDALONE;
+            }
           }
           /* if we didn't read the foreign DTD then this means that there
              is no external subset and we must reset dtd->hasParamEntityRefs
@@ -5690,9 +5696,11 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
 #ifdef XML_DTD
           && ! parser->m_paramEntityParsing
 #endif /* XML_DTD */
-          && parser->m_notStandaloneHandler
-          && ! parser->m_notStandaloneHandler(parser->m_handlerArg))
-        return XML_ERROR_NOT_STANDALONE;
+          && parser->m_notStandaloneHandler) {
+        const int status = parser->m_notStandaloneHandler(parser->m_handlerArg);
+        if (status == XML_STATUS_ERROR)
+          return XML_ERROR_NOT_STANDALONE;
+      }
 #ifndef XML_DTD
       break;
 #else  /* XML_DTD */
@@ -6092,9 +6100,11 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
         }
       }
 #endif /* XML_DTD */
-      if (! dtd->standalone && parser->m_notStandaloneHandler
-          && ! parser->m_notStandaloneHandler(parser->m_handlerArg))
-        return XML_ERROR_NOT_STANDALONE;
+      if (! dtd->standalone && parser->m_notStandaloneHandler) {
+        const int status = parser->m_notStandaloneHandler(parser->m_handlerArg);
+        if (status == XML_STATUS_ERROR)
+          return XML_ERROR_NOT_STANDALONE;
+      }
       break;
 
       /* Element declaration stuff */
