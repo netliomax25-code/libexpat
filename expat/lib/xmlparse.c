@@ -3304,7 +3304,9 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
       *eventEndPP = end;
       if (parser->m_characterDataHandler) {
         XML_Char c = 0xA;
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, &c, 1);
+        afterHandler(parser);
       } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, end);
       /* We are at the end of the final buffer, should we check for
@@ -3357,9 +3359,11 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
                                 ((char *)&ch) + sizeof(XML_Char), __LINE__,
                                 XML_ACCOUNT_ENTITY_EXPANSION);
 #endif /* XML_GE == 1 */
-        if (parser->m_characterDataHandler)
+        if (parser->m_characterDataHandler) {
+          beforeHandler(parser);
           parser->m_characterDataHandler(parser->m_handlerArg, &ch, 1);
-        else if (parser->m_defaultHandler)
+          afterHandler(parser);
+        } else if (parser->m_defaultHandler)
           reportDefault(parser, enc, s, next);
         break;
       }
@@ -3602,8 +3606,10 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
         return XML_ERROR_BAD_CHAR_REF;
       if (parser->m_characterDataHandler) {
         XML_Char buf[XML_ENCODE_MAX];
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, buf,
                                        XmlEncode(n, (ICHAR *)buf));
+        afterHandler(parser);
       } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, next);
     } break;
@@ -3612,7 +3618,9 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
     case XML_TOK_DATA_NEWLINE:
       if (parser->m_characterDataHandler) {
         XML_Char c = 0xA;
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, &c, 1);
+        afterHandler(parser);
       } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, next);
       break;
@@ -3633,11 +3641,13 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
          However, now we have a start/endCdataSectionHandler, so it seems
          easier to let the user deal with this.
       */
-      else if ((0) && parser->m_characterDataHandler)
+      else if ((0) && parser->m_characterDataHandler) {
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, parser->m_dataBuf,
                                        0);
-      /* END disabled code */
-      else if (parser->m_defaultHandler)
+        afterHandler(parser);
+        /* END disabled code */
+      } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, next);
       result
           = doCdataSection(parser, enc, &next, end, nextPtr, haveMore, account);
@@ -3657,13 +3667,18 @@ doContent(XML_Parser parser, int startTagLevel, const ENCODING *enc,
         if (MUST_CONVERT(enc, s)) {
           ICHAR *dataPtr = (ICHAR *)parser->m_dataBuf;
           XmlConvert(enc, &s, end, &dataPtr, (ICHAR *)parser->m_dataBufEnd);
+          beforeHandler(parser);
           parser->m_characterDataHandler(
               parser->m_handlerArg, parser->m_dataBuf,
               (int)(dataPtr - (ICHAR *)parser->m_dataBuf));
-        } else
+          afterHandler(parser);
+        } else {
+          beforeHandler(parser);
           parser->m_characterDataHandler(
               parser->m_handlerArg, (const XML_Char *)s,
               (int)((const XML_Char *)end - (const XML_Char *)s));
+          afterHandler(parser);
+        }
       } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, end);
       /* We are at the end of the final buffer, should we check for
@@ -4573,11 +4588,13 @@ doCdataSection(XML_Parser parser, const ENCODING *enc, const char **startPtr,
         parser->m_endCdataSectionHandler(parser->m_handlerArg);
       /* BEGIN disabled code */
       /* see comment under XML_TOK_CDATA_SECT_OPEN */
-      else if ((0) && parser->m_characterDataHandler)
+      else if ((0) && parser->m_characterDataHandler) {
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, parser->m_dataBuf,
                                        0);
-      /* END disabled code */
-      else if (parser->m_defaultHandler)
+        afterHandler(parser);
+        /* END disabled code */
+      } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, next);
       *startPtr = next;
       *nextPtr = next;
@@ -4588,7 +4605,9 @@ doCdataSection(XML_Parser parser, const ENCODING *enc, const char **startPtr,
     case XML_TOK_DATA_NEWLINE:
       if (parser->m_characterDataHandler) {
         XML_Char c = 0xA;
+        beforeHandler(parser);
         parser->m_characterDataHandler(parser->m_handlerArg, &c, 1);
+        afterHandler(parser);
       } else if (parser->m_defaultHandler)
         reportDefault(parser, enc, s, next);
       break;
