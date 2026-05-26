@@ -5425,10 +5425,10 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
           if (dtd->paramEntityRead) {
             if (! dtd->standalone && parser->m_notStandaloneHandler) {
               beforeHandler(parser);
-              const int status
+              const int handlerStatus
                   = parser->m_notStandaloneHandler(parser->m_handlerArg);
               afterHandler(parser);
-              if (status == XML_STATUS_ERROR)
+              if (handlerStatus == XML_STATUS_ERROR)
                 return XML_ERROR_NOT_STANDALONE;
             }
           }
@@ -5477,10 +5477,10 @@ doProlog(XML_Parser parser, const ENCODING *enc, const char *s, const char *end,
           if (dtd->paramEntityRead) {
             if (! dtd->standalone && parser->m_notStandaloneHandler) {
               beforeHandler(parser);
-              const int status
+              const int handlerStatus
                   = parser->m_notStandaloneHandler(parser->m_handlerArg);
               afterHandler(parser);
-              if (status == XML_STATUS_ERROR)
+              if (handlerStatus == XML_STATUS_ERROR)
                 return XML_ERROR_NOT_STANDALONE;
             }
           }
