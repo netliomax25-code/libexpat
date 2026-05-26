@@ -2476,7 +2476,7 @@ XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
 
 void *XMLCALL
 XML_GetBuffer(XML_Parser parser, int len) {
-  if (parser == NULL)
+  if ((parser == NULL) || parser->m_insideHandler)
     return NULL;
   if (len < 0) {
     parser->m_errorCode = XML_ERROR_NO_MEMORY;
