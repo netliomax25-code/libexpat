@@ -1156,11 +1156,13 @@ generate_hash_secret_salt(void) {
 }
 
 #define beforeHandler(parser) { \
+  fprintf(stderr, "beforeHandler %d\n", __LINE__); \
   assert(! parser->m_insideHandler); \
   parser->m_insideHandler = true; \
 }
 
 #define afterHandler(parser) { \
+  fprintf(stderr, "afterHandler %d\n", __LINE__); \
   assert(parser->m_insideHandler); \
   parser->m_insideHandler = false; \
 }
