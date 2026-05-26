@@ -1842,7 +1842,7 @@ void XMLCALL
 XML_ParserFree(XML_Parser parser) {
   TAG *tagList;
   OPEN_INTERNAL_ENTITY *entityList;
-  if (parser == NULL)
+  if ((parser == NULL) || parser->m_insideHandler)
     return;
   /* free m_tagStack and m_freeTagList */
   tagList = parser->m_tagStack;
